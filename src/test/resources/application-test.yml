@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/shilingi_test
+    username: postgres
+    password: ""
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    clean-disabled: false
+
+shilingi:
+  clock:
+    zone: Africa/Nairobi
+
+  # SPEC.md O6: planning horizon and buffer. Stated in SPEC.md section 11 as defaults, and
+  # recorded here rather than hardcoded so they are reviewable and changeable without a rebuild.
+  # There is no fallback in Java: a missing value stops startup, the same as the clock zone,
+  # because a buffer nobody chose is a financial rule nobody chose.
+  agent:
+    horizon-days: 35
+    buffer: "0.10"

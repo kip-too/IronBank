@@ -1,0 +1,10 @@
+-- V1: baseline.
+--
+-- Deliberately creates nothing.
+--
+-- Day 1 (SPEC.md section 15) wires Flyway and proves it runs against a real PostgreSQL
+-- database. The chart of accounts and the ledger tables are day 2, and inventing a table
+-- here to make this migration look busy would put schema in the repository that no rule
+-- in SPEC.md asked for.
+--
+-- Flyway records this in flyway_schema_history, which is what FlywayMigrationTest asserts.

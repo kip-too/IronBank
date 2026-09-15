@@ -1,0 +1,7 @@
+2026.09.14 15:20:59 INFO  Tracing is disabled for protocol LSP. To enable tracing of incoming and outgoing JSON messages, create an empty file at c:\Users\hkipto\Desktop\IronBank\.metals\lsp.trace.json or C:\Users\hkipto\AppData\Local\scalameta\metals\cache\lsp.trace.json
+2026.09.14 15:21:04 INFO  logging to files C:\Users\hkipto\Desktop\IronBank\.metals\metals.log
+2026.09.14 15:21:04 INFO  Started: Metals version 1.6.8 in folders 'C:\Users\hkipto\Desktop\IronBank' for client Visual Studio Code 1.136.2.
+2026.09.14 15:21:04 INFO  Memory monitor started
+2026.09.14 15:21:07 WARN  Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
+Sep 15, 2026 8:39:00 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
