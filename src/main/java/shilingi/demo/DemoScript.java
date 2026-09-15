@@ -23,6 +23,12 @@ import shilingi.ledger.Posting;
 import shilingi.money.Currency;
 import shilingi.money.Money;
 import shilingi.money.Rate;
+import shilingi.payout.CallbackIngest;
+import shilingi.payout.MockPayoutRail;
+import shilingi.payout.PayoutCallback;
+import shilingi.payout.PayoutOutcome;
+import shilingi.recon.ReconItem;
+import shilingi.recon.Reconciler;
 import shilingi.obligations.Obligation;
 import shilingi.obligations.ObligationRepository;
 import shilingi.receivables.Receivable;
@@ -81,7 +87,11 @@ public class DemoScript {
     private static final LocalDate DAY_1 = LocalDate.of(2026, 9, 1);
     private static final LocalDate DAY_12 = LocalDate.of(2026, 9, 12);
     private static final LocalDate DAY_20 = LocalDate.of(2026, 9, 20);
+    private static final LocalDate DAY_25 = LocalDate.of(2026, 9, 25);
     private static final LocalDate DAY_30 = LocalDate.of(2026, 9, 30);
+
+    /** Small, and unexplained. PROBLEM.md F3 does not need to be large to be a problem. */
+    private static final Money UNEXPLAINED = Money.of(1_250_000L, Currency.KES);
 
     private final Flyway flyway;
     private final MutableClock clock;
@@ -94,11 +104,14 @@ public class DemoScript {
     private final ReceivableRepository receivables;
     private final ObligationRepository obligations;
     private final Balances balances;
+    private final CallbackIngest ingest;
+    private final Reconciler reconciler;
 
     public DemoScript(Flyway flyway, MutableClock clock, LedgerService ledger, Bookkeeper books,
                       FxEngine fx, TreasuryAgent agent, TreasuryService treasury,
                       InstructionRepository instructions, ReceivableRepository receivables,
-                      ObligationRepository obligations, Balances balances) {
+                      ObligationRepository obligations, Balances balances,
+                      CallbackIngest ingest, Reconciler reconciler) {
         this.flyway = flyway;
         this.clock = clock;
         this.ledger = ledger;
@@ -110,6 +123,8 @@ public class DemoScript {
         this.receivables = receivables;
         this.obligations = obligations;
         this.balances = balances;
+        this.ingest = ingest;
+        this.reconciler = reconciler;
     }
 
     /** One step of the story, as both columns saw it. */
@@ -117,7 +132,8 @@ public class DemoScript {
     }
 
     public record Story(List<Act> acts, NaiveSheet sheet, Decision refusal, Decision permitted,
-                        Money convertedDollars, String instructionRef) {
+                        Money convertedDollars, String instructionRef,
+                        List<ReconItem> unanswered, List<ReconItem> exceptions) {
     }
 
     /**
@@ -135,10 +151,12 @@ public class DemoScript {
         Receivable invoice = dayOne(acts);
         dayTwelve(acts, invoice);
         DayTwentyResult twenty = dayTwenty(acts, sheet);
+        dayTwentyFive(acts);
         dayThirty(acts);
 
         return new Story(acts, sheet, twenty.refusal(), twenty.permitted(),
-                twenty.converted(), twenty.instructionRef());
+                twenty.converted(), twenty.instructionRef(),
+                reconciler.open(), reconciler.exceptions());
     }
 
     private void reset() {
@@ -265,6 +283,37 @@ public class DemoScript {
                 + "not recorded anywhere, because nobody sent an invoice for them."));
 
         return new DayTwentyResult(refusal, permitted, converted, created.externalRef());
+    }
+
+    /**
+     * PROBLEM.md F3, and the thing the naive method has no answer to at all.
+     *
+     * <p>The rail reports a payment this system never instructed. It is not an error to swallow:
+     * it is money that moved for a reason nobody here knows, so it is recorded, posted to suspense
+     * with a date on it, and it starts ageing.
+     */
+    private void dayTwentyFive(List<Act> acts) {
+        moveTo(DAY_25);
+
+        PayoutCallback fromNowhere = new PayoutCallback(
+                MockPayoutRail.RAIL, "rail/unexpected-88", "payout/never-instructed",
+                PayoutOutcome.SUCCEEDED, UNEXPLAINED, clock.instant(),
+                shilingi.intent.Snapshot.of()
+                        .with("rail", MockPayoutRail.RAIL)
+                        .with("note", "reported by the provider; no instruction carries this reference")
+                        .toJson());
+
+        ingest.accept(fromNowhere);
+        Reconciler.Report report = reconciler.reconcile();
+
+        acts.add(new Act(DAY_25, "The rail reports " + Figures.of(UNEXPLAINED)
+                + " nobody instructed",
+                "Recorded before it was judged, then raised as an unmatched item and posted "
+                + "Dr 1900 Suspense / Cr 1000 Bank with the date it was first seen. "
+                + report.raised() + " question now ageing. It is not an error to swallow: it is "
+                + "money that moved for a reason nobody here knows.",
+                "The bank statement shows a payment. It is reconciled by eye at month end, or it "
+                + "is not."));
     }
 
     private void dayThirty(List<Act> acts) {

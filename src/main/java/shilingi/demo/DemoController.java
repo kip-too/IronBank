@@ -131,6 +131,20 @@ public class DemoController {
                    anything was written down. They are not recoverable from those records by
                    anyone, at any later date, however carefully they look.</p>
 
+                <h2>Questions nobody has answered yet</h2>
+                <p class="note">PROBLEM.md §4 on suspense: <em>“not a bin. Every item in it is a
+                   question with a date attached, and it gets older and more embarrassing until
+                   somebody answers it.”</em> The age is worked out, never stored — an age that is
+                   stored is true until the next day and then false, silently.</p>
+                <table>
+                  <tr><th>Raised</th><th style="width:34%%">What</th><th class="num">Business days</th>
+                      <th class="num">Amount</th></tr>
+                  %s
+                </table>
+                <p class="note">Suspense (account 1900) stands at <strong>%s</strong>. It is on the
+                   balance sheet, it is ageing, and it cannot be closed without somebody putting
+                   their name to an explanation.</p>
+
                 <h2>What this screen is not showing you</h2>
                 <p class="note">
                   The payroll itself is <strong>funded, not paid</strong>: <code>SPEC.md</code> §6's
@@ -150,7 +164,9 @@ public class DemoController {
                         sheetRows(story),
                         story.sheet().labelForTotal(),
                         Figures.of(story.sheet().total()),
-                        questions(story));
+                        questions(story),
+                        reconItems(story),
+                        Figures.of(demo.balanceOf(AccountCodes.SUSPENSE)));
     }
 
     private String acts(DemoScript.Story story) {
@@ -213,6 +229,30 @@ public class DemoController {
                 || accountCode.equals(AccountCodes.EXCHANGE_DIFFERENCE_REALISED)
                 || accountCode.equals(AccountCodes.PAYABLES);
         return naturallyCredit ? Figures.asPositive(balance) : Figures.of(balance);
+    }
+
+    private String reconItems(DemoScript.Story story) {
+        if (story.unanswered().isEmpty()) {
+            return "<tr><td colspan=\"4\" class=\"cannot\">Nothing unexplained.</td></tr>";
+        }
+
+        java.time.LocalDate today = java.time.LocalDate.ofInstant(demo.now(), DemoClockConfig.ZONE);
+        StringBuilder rows = new StringBuilder();
+
+        for (var item : story.unanswered()) {
+            long age = item.ageInBusinessDaysOn(today);
+            boolean past = story.exceptions().stream().anyMatch(e -> e.id().equals(item.id()));
+
+            rows.append("<tr><td>").append(item.firstSeen())
+                    .append("</td><td>").append(escape(item.kind().name().replace('_', ' ').toLowerCase()))
+                    .append("<br><span class=\"note\">").append(escape(item.detail())).append("</span>")
+                    .append("</td><td class=\"num\">").append(age)
+                    .append(past ? " <strong>— exception</strong>" : " <span class=\"note\">— noise</span>")
+                    .append("</td><td class=\"num\">")
+                    .append(item.amount().map(Figures::of).orElse("—"))
+                    .append("</td></tr>");
+        }
+        return rows.toString();
     }
 
     private String questions(DemoScript.Story story) {

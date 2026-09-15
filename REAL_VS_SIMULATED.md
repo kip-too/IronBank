@@ -3,7 +3,7 @@
 What actually runs against something real, and what does not. `SPEC.md` §18 asks for this blunt
 and unsoftened, and calls it a strength rather than an admission. Nothing below is rounded up.
 
-**Status as at day 11 of 14.**
+**Status as at day 14 of 14 — the end of the build window.**
 
 ---
 
@@ -18,6 +18,8 @@ and unsoftened, and calls it a strength rather than an admission. Nothing below 
 | **The money arithmetic** | Integer minor units end to end - in Java, in the database, in JSON, across the process boundary to Node |
 | **The sidecar contract** | The Java↔Node agreement is tested against the **real sidecar process**, started by the test, not against a Java-side fake |
 | **viem** | 2.56.5, installed. Chain id, RPC and contract address read from viem's and Circle's own sources, never from memory |
+| **Replay** | Reads `journal_entry` and `posting` and no other table. Proven by deleting the entire rate feed and replaying to identical figures |
+| **Reconciliation ageing** | `first_seen` is immutable at the database, so re-running reconciliation cannot re-date an item and make it young again |
 
 ## Simulated
 
@@ -36,8 +38,12 @@ and unsoftened, and calls it a strength rather than an admission. Nothing below 
 - **Payouts are not posted to the ledger.** `SPEC.md` §6's chart has no expense account, so an
   obligation cannot be accrued. Raised as a finding rather than worked around (ADR-025).
 - **Nothing marks obligations FUNDED**, and nothing pays one denominated in dollars.
-- **No reconciler, no suspense ageing, no replay.** Day 13.
-- **No demo screen.** Day 12.
+- **No matching of receipts to invoices.** SPEC.md §13's three-way match is about money out;
+  money in has its own and it is not built.
+- **A foreign-currency unmatched item raises a recon item but posts nothing to suspense**, because
+  account 1900 is a shilling account.
+- **No partial settlement, no credit notes.** A part payment reaches the reconciler as an amount
+  that does not match, which §13 says is an exception, always.
 
 ---
 
@@ -75,3 +81,18 @@ with USDC and no gas can do nothing), and the deployed contract's **`decimals()`
 
 Until then this project has a settlement adapter that is complete and unproven against a chain,
 and says so.
+
+---
+
+## What replay does and does not prove
+
+Worth stating here because a passing replay test invites a bigger claim than it earns.
+
+Replay proves **consistency and reproducibility**. It cannot tell you the rate on the 12th was
+really 131.50. It can tell you that whatever rate was used is still on the posting, that the entry
+balanced then and balances now, that nothing has been edited since, and that September's closing
+position can be produced in March with nobody remembering anything.
+
+Correctness of the *inputs* is what the rate source, the reconciler and a person are for. The full
+argument, and the answer to `PROBLEM.md` §8 question 8, is in
+[ADR-027](docs/adr/ADR-027-replay-proves-consistency.md).

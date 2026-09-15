@@ -7,6 +7,13 @@ probably wrong, which are marked as such rather than smoothed over.
 
 | ADR | Decision | Day | Status |
 |-----|----------|-----|--------|
+| [001](ADR-001-shillings-are-functional.md) | Shillings are the functional currency | 14 | accepted |
+| [002](ADR-002-four-accounts-not-one.md) | Exchange difference, spread and fee are four accounts | 14 | accepted — the central claim |
+| [003](ADR-003-weighted-average-carrying-rate.md) | Weighted average, not FIFO (O2) | 14 | assumed default — **Kurgat's to overturn** |
+| [004](ADR-004-awaiting-resolution.md) | Why AWAITING_RESOLUTION exists and is never retried | 14 | accepted |
+| [005](ADR-005-settlement-is-a-separate-process.md) | The settlement leg is a separate process, in another language | 14 | accepted |
+| [006](ADR-006-the-payout-leg-is-mocked.md) | The payout leg is mocked — the regulatory boundary | 14 | accepted — a design constraint |
+| [007](ADR-007-the-residue-rule.md) | The residue rule: the difference goes to the last part | 14 | accepted |
 | [008](ADR-008-one-foreign-currency-code.md) | Account 1200 is denominated USDC, not USD | 2 | accepted — **most likely to be wrong** |
 | [009](ADR-009-plain-jdbc-not-jpa.md) | Plain JDBC, not JPA or Hibernate | 2 | accepted |
 | [010](ADR-010-immutability-by-raising-trigger.md) | Immutability by a raising trigger, not a PostgreSQL RULE | 2 | accepted |
@@ -28,19 +35,19 @@ probably wrong, which are marked as such rather than smoothed over.
 | [026](ADR-026-the-demo.md) | The demo: one opening balance, and a second hole in the chart | 12 | accepted |
 | [027](ADR-027-replay-proves-consistency.md) | Replay proves consistency, not correctness — and says so | 13 | accepted — **answers PROBLEM.md §8 q8** |
 
-## Reserved by `SPEC.md` §18, not yet written
+## Two findings that need Kurgat's answer
 
-These numbers are claimed by the specification and must not be reused.
+Neither is a design choice. Both are gaps in `SPEC.md` §6's chart of accounts, found by trying to
+post real entries:
 
-| ADR | Topic | Written on |
-|-----|-------|------------|
-| 001 | Why shillings are the functional currency | day 14 |
-| 002 | Why exchange difference, spread and fee are separate accounts | day 14 |
-| 003 | Weighted average versus first-in-first-out for carrying rate (O2) | after day 5 — partly covered by 016 decision 5 |
-| 004 | Why `AWAITING_RESOLUTION` exists and is never retried | after day 9 — largely covered by 020 |
-| 005 | Why the settlement leg is a separate process in another language | after day 11 |
-| 006 | Why the shilling payout leg is mocked — the regulatory boundary | after day 10 — partly covered by 024 |
-| 007 | The residue rule | after day 4 |
+1. **No expense account**, so an obligation cannot be accrued and a payout cannot be posted —
+   [ADR-025](ADR-025-the-chart-cannot-express-an-obligation.md).
+2. **No equity account**, so a balance cannot be brought forward —
+   [ADR-026](ADR-026-the-demo.md), decision 2.
+
+The question both turn on: is §6's chart a **minimum that may be extended**, or a **complete set**?
+§6 calls it a "minimum set", which reads like the former — but every account in it is justified by
+an invariant, and neither of these is. Either answer is fine. Guessing between them is not.
 
 ## Smaller decisions, logged where they are made rather than here
 

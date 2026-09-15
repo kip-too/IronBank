@@ -14,6 +14,8 @@ import shilingi.ledger.AccountCodes;
 import shilingi.money.Currency;
 import shilingi.money.Money;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -114,8 +116,13 @@ class DemoScriptTest {
                     .isEqualTo(kes(280_000L));
 
             assertThat(demo.balanceOf(AccountCodes.BANK_KES))
-                    .as("84,400 opening plus 793,200 converted")
-                    .isEqualTo(kes(87_760_000L));
+                    .as("84,400 opening plus 793,200 converted, less the 12,500 that left "
+                        + "for a reason nobody can explain")
+                    .isEqualTo(kes(87_760_000L - 1_250_000L));
+
+            assertThat(demo.balanceOf(AccountCodes.SUSPENSE))
+                    .as("I6: the unexplained movement sits in 1900 with a date on it")
+                    .isEqualTo(kes(1_250_000L));
 
             assertThat(demo.walletDollars())
                     .as("4,000 still held, which is where PROBLEM.md day 30 opens")
@@ -208,6 +215,40 @@ class DemoScriptTest {
     }
 
     // ------------------------------------------------------------------------------------
+
+    @Nested
+    @DisplayName("PROBLEM.md F3: money that moved for a reason nobody knows")
+    class TheUnansweredQuestion {
+
+        @Test
+        void it_is_raised_aged_and_posted_to_suspense() {
+            DemoScript.Story story = demo.play();
+
+            assertThat(story.unanswered()).singleElement().satisfies(item -> {
+                assertThat(item.kind().name()).isEqualTo("UNMATCHED_INBOUND");
+                assertThat(item.firstSeen()).isEqualTo(LocalDate.of(2026, 9, 25));
+                assertThat(item.detail()).contains("no instruction carries");
+            });
+        }
+
+        @Test
+        @DisplayName("by month end it has crossed the threshold and become an exception")
+        void it_ages_into_an_exception() {
+            DemoScript.Story story = demo.play();
+
+            assertThat(story.exceptions())
+                    .as("raised on the 25th, still open on the 30th - past two business days")
+                    .hasSize(1);
+        }
+
+        @Test
+        @DisplayName("and it cannot be closed without somebody putting their name to it")
+        void closing_it_takes_a_person() {
+            DemoScript.Story story = demo.play();
+
+            assertThat(story.unanswered().get(0).isOpen()).isTrue();
+        }
+    }
 
     @Test
     @DisplayName("the 6,000 comes from the agent's rule, not from a special case")
