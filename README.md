@@ -95,6 +95,9 @@ SPRING_FLYWAY_CLEAN_DISABLED=false \
 SERVER_PORT=8090 \
 java -jar target/shilingi-0.1.0-SNAPSHOT.jar
 ```
+```bash
+java -jar target\shilingi-0.1.0-SNAPSHOT.jar --spring.profiles.active=demo --spring.datasource.url=jdbc:postgresql://localhost:5432/shilingi_demo --spring.flyway.clean-disabled=false --server.port=8090
+```
 
 Then open **<http://localhost:8090/>**.
 
@@ -164,6 +167,7 @@ is talking to.
 | [`PROBLEM.md`](PROBLEM.md) | why this exists. **Read this first** — the rest is meaningless without it |
 | [`SPEC.md`](SPEC.md) | what was to be built, and the rules it must not break |
 | [`REAL_VS_SIMULATED.md`](REAL_VS_SIMULATED.md) | what actually runs against something real |
+| [`docs/TEST_AND_OPERATIONS.md`](docs/TEST_AND_OPERATIONS.md) | **deploying and running this on Ubuntu, and testing it end to end** |
 | [`docs/network.md`](docs/network.md) | every network fact, with the date it was read |
 | [`docs/adr/`](docs/adr/README.md) | **27 decision records** — what was decided, why, and what it cost |
 
