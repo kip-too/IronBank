@@ -19,3 +19,12 @@ shilingi:
   agent:
     horizon-days: 35
     buffer: "0.10"
+
+  settlement:
+    # The Node sidecar (SPEC.md section 12). It listens on loopback only - that is the whole of
+    # its security model, and it is stated rather than implied. Start it with:
+    #     cd sidecar && npm run stub      (no network needed)
+    #     cd sidecar && npm start         (live, needs an unblocked network - docs/network.md s4)
+    base-url: "http://127.0.0.1:8787"
+    # A timeout here means the outcome is UNKNOWN, never that the payment failed.
+    timeout-seconds: 10

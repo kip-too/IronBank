@@ -24,6 +24,7 @@ probably wrong, which are marked as such rather than smoothed over.
 | [022](ADR-022-in-flight-money-and-reserved-dollars.md) | Money in flight, and dollars owed in dollars | 9+ | accepted — **fixes two defects** |
 | [023](ADR-023-what-the-naive-panel-does.md) | What the demo's naive panel does (O8) | 9+ | accepted — answers §20's hardest open item |
 | [024](ADR-024-payout-mock-shape-and-delivery.md) | The payout mock: O4 answered no; delivery is pumped | 10 | accepted |
+| [025](ADR-025-the-chart-cannot-express-an-obligation.md) | The chart cannot express an obligation, so payouts are not posted | 11 | accepted — **a finding needing Kurgat's answer** |
 
 ## Reserved by `SPEC.md` §18, not yet written
 
