@@ -23,6 +23,7 @@ probably wrong, which are marked as such rather than smoothed over.
 | [021](ADR-021-manual-review-needs-an-exit.md) | MANUAL_REVIEW gets an exit, through a named person | 9+ | accepted — closes ADR-020's gap |
 | [022](ADR-022-in-flight-money-and-reserved-dollars.md) | Money in flight, and dollars owed in dollars | 9+ | accepted — **fixes two defects** |
 | [023](ADR-023-what-the-naive-panel-does.md) | What the demo's naive panel does (O8) | 9+ | accepted — answers §20's hardest open item |
+| [024](ADR-024-payout-mock-shape-and-delivery.md) | The payout mock: O4 answered no; delivery is pumped | 10 | accepted |
 
 ## Reserved by `SPEC.md` §18, not yet written
 
@@ -35,7 +36,7 @@ These numbers are claimed by the specification and must not be reused.
 | 003 | Weighted average versus first-in-first-out for carrying rate (O2) | after day 5 — partly covered by 016 decision 5 |
 | 004 | Why `AWAITING_RESOLUTION` exists and is never retried | after day 9 — largely covered by 020 |
 | 005 | Why the settlement leg is a separate process in another language | after day 11 |
-| 006 | Why the shilling payout leg is mocked — the regulatory boundary | after day 10 |
+| 006 | Why the shilling payout leg is mocked — the regulatory boundary | after day 10 — partly covered by 024 |
 | 007 | The residue rule | after day 4 |
 
 ## Smaller decisions, logged where they are made rather than here
