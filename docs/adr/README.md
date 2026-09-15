@@ -26,6 +26,7 @@ probably wrong, which are marked as such rather than smoothed over.
 | [024](ADR-024-payout-mock-shape-and-delivery.md) | The payout mock: O4 answered no; delivery is pumped | 10 | accepted |
 | [025](ADR-025-the-chart-cannot-express-an-obligation.md) | The chart cannot express an obligation, so payouts are not posted | 11 | accepted — **a finding needing Kurgat's answer** |
 | [026](ADR-026-the-demo.md) | The demo: one opening balance, and a second hole in the chart | 12 | accepted |
+| [027](ADR-027-replay-proves-consistency.md) | Replay proves consistency, not correctness — and says so | 13 | accepted — **answers PROBLEM.md §8 q8** |
 
 ## Reserved by `SPEC.md` §18, not yet written
 

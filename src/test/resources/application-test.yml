@@ -31,3 +31,9 @@ shilingi:
     base-url: "http://127.0.0.1:8787"
     # A timeout here means the outcome is UNKNOWN, never that the payment failed.
     timeout-seconds: 10
+
+  recon:
+    # SPEC.md O3, still open, assumed 2 business days. Configuration rather than a constant for
+    # the same reason as the clock zone: a threshold nobody chose is a rule nobody chose.
+    # Weekends are excluded when counting; Kenyan public holidays are not modelled.
+    stale-after-business-days: 2
