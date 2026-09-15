@@ -44,6 +44,19 @@
       <artifactId>spring-boot-starter-jdbc</artifactId>
     </dependency>
 
+    <!--
+      The one demonstration screen (SPEC.md section 2 and section 4). Needed to serve anything
+      at all.
+
+      Note what is NOT here: no template engine. SPEC.md section 3's technology table names none,
+      and rule 6 makes every library a decision. One server-rendered page does not justify
+      Thymeleaf, so DemoController writes its HTML with Java 21 text blocks.
+    -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>

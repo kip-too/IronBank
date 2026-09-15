@@ -1,4 +1,7 @@
 spring:
+  main:
+    # The demo profile adds a web layer; tests do not need a port bound.
+    web-application-type: none
   datasource:
     url: jdbc:postgresql://localhost:5432/shilingi_test
     username: postgres
