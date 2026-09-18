@@ -5,3 +5,6 @@
 2026.09.14 15:21:07 WARN  Using H2 2.4.240 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
 Sep 15, 2026 8:39:00 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
 INFO: Unsupported notification method: $/setTrace
+2026.09.15 16:18:47 INFO  Started: Metals version 1.6.9 in folders 'C:\Users\hkipto\Desktop\IronBank' for client Visual Studio Code 1.137.0.
+2026.09.15 16:18:47 INFO  Memory monitor started
+2026.09.15 16:18:53 WARN  Using H2 2.5.250 which is newer than the version Flyway has been verified with. The latest verified version of H2 is 2.3.232.
